@@ -5,12 +5,16 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.display.DisplayManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
@@ -72,6 +76,16 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
       return true;
     }
+
+    @Override
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+        return WebViewFlutterPlugin.fileChooser.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+//      return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+    }
+
+    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
+        WebViewFlutterPlugin.fileChooser.openFileChooser(uploadMsg, acceptType, capture);
+    }
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -97,7 +111,9 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
     // Multi windows is set with FlutterWebChromeClient by default to handle internal bug: b/159892679.
     webView.getSettings().setSupportMultipleWindows(true);
-    webView.setWebChromeClient(new FlutterWebChromeClient());
+
+    FlutterWebChromeClient client = new FlutterWebChromeClient();
+    webView.setWebChromeClient(client);
 
     methodChannel = new MethodChannel(messenger, "plugins.flutter.io/webview_" + id);
     methodChannel.setMethodCallHandler(this);

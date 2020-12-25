@@ -1,2 +1,18 @@
-<manifest package="io.flutter.plugins.webviewflutter">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.flutter.plugins.webviewflutter">
+
+    <application>
+        <provider
+            android:name=".FileProvider"
+            android:authorities="${applicationId}.io.flutter.plugins.webviewflutter.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+    </application>
+
 </manifest>
